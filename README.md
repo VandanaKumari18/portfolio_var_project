@@ -87,6 +87,8 @@ that states them plainly — so I built this to show its own edges, not just its
 
 ### 1. Price Performance & Correlation
 
+![Normalized PP](Images/IMG_20260705_160537.jpg)
+
 I pulled ~4.5 years of daily data (Jan 2022 – Jul 2026, 1,128 trading days) for AAPL,
 GOOGL, and MSFT. Looking at normalized performance, all three stocks moved through
 the same broad cycles — a drawdown through 2022, recovery into 2024, and a stronger
