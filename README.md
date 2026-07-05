@@ -98,7 +98,7 @@ all large-cap tech), but they don't move in lockstep. This matters directly for 
 because it's the reason the portfolio's risk is lower than simply adding up each
 stock's individual risk — diversification is doing real work here, just not a huge amount.
 
-[Insert screenshot: price performance chart + correlation matrix]
+![Price Performance](Images/IMG_20260705_160458.jpg)
 
 ### 2. Value at Risk — Three Methods, Cross-Checked
 
@@ -128,7 +128,7 @@ proof, not just theory, that Normal-distribution risk models can understate tail
 exactly as it should — CVaR is the average loss *given* you're already past the
 VaR line, so it's always a larger number than the threshold itself.
 
-[Insert screenshot: VaR histogram with threshold lines]
+![VaR Histogram](Images/IMG_20260705_160518.jpg)
 
 ### 3. Stress Testing — What If a Specific Shock Hit Today?
 
@@ -144,7 +144,7 @@ The tech-drawdown number is a useful gut-check on its own — a flat 10% drop ac
 an entire $1,000,000 book should cost exactly $100,000, and it does, confirming the
 underlying weighted-sum math is correct.
 
-[Insert screenshot: stress scenario bar chart]
+![Stress Scenarios](Images/IMG_20260705_160435.jpg)
 
 ### 4. Correlation Spike — Diversification Breaking Down
 
@@ -175,7 +175,7 @@ strongest piece of evidence in the whole project that the model isn't just
 mathematically correct on paper — it's actually reliable against nearly 3.5 years
 of real market behavior.
 
-[Insert screenshot: rolling backtest chart with breach markers]
+![Rolling Backtest](Images/IMG_20260705_160518.jpg)
 
 ### Automated Tests
 
