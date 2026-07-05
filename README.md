@@ -81,3 +81,113 @@ market being open.
 
 I think a risk report that quietly hides these limitations is more dangerous than one
 that states them plainly — so I built this to show its own edges, not just its output.
+
+
+## Results & Output
+
+### 1. Price Performance & Correlation
+
+I pulled ~4.5 years of daily data (Jan 2022 – Jul 2026, 1,128 trading days) for AAPL,
+GOOGL, and MSFT. Looking at normalized performance, all three stocks moved through
+the same broad cycles — a drawdown through 2022, recovery into 2024, and a stronger
+run after that — but with real divergence in magnitude, especially GOOGL's later run-up.
+
+The correlation matrix confirms this: pairwise correlations sit around 0.55-0.57.
+That's moderate, not extreme — these three stocks share some common exposure (they're
+all large-cap tech), but they don't move in lockstep. This matters directly for VaR,
+because it's the reason the portfolio's risk is lower than simply adding up each
+stock's individual risk — diversification is doing real work here, just not a huge amount.
+
+[Insert screenshot: price performance chart + correlation matrix]
+
+### 2. Value at Risk — Three Methods, Cross-Checked
+
+Rather than trust one VaR method blindly, I computed all three and used their agreement
+(or disagreement) as a sanity check on the whole model.
+
+| Method | 95% VaR | 99% VaR |
+|---|---|---|
+| Historical Simulation | $25,411 | $40,054 |
+| Parametric (Normal) | $25,897 | $36,627 |
+| Monte Carlo | $25,233 | $36,053 |
+| Expected Shortfall (CVaR) | $32,476 | $41,962 |
+
+**At 95% confidence, all three methods land within about $650 of each other** —
+strong agreement, and a good sign the data and math are both sound.
+
+**At 99% confidence, Historical VaR pulls noticeably higher** ($40,054) than
+Parametric/Monte Carlo (~$36,000-36,600). This isn't an error — it's the real
+market showing "fatter tails" than a bell-curve model expects. Parametric and Monte
+Carlo both assume returns follow a Normal distribution, which smooths away how often
+truly extreme days happen. Historical Simulation just reads directly off real past
+days, so it picked up on an actual bad day that the Normal-distribution methods
+under-predicted. This is one of the most important things this project surfaced —
+proof, not just theory, that Normal-distribution risk models can understate tail risk.
+
+**Expected Shortfall (CVaR) came out higher than VaR at every confidence level**,
+exactly as it should — CVaR is the average loss *given* you're already past the
+VaR line, so it's always a larger number than the threshold itself.
+
+[Insert screenshot: VaR histogram with threshold lines]
+
+### 3. Stress Testing — What If a Specific Shock Hit Today?
+
+VaR is a statistical estimate. Stress testing is different — it's a direct "if this
+exact thing happens, here's the dollar cost," with no probability attached.
+
+| Scenario | Shock | Portfolio Loss |
+|---|---|---|
+| 2008-style shock | AAPL -8%, GOOGL -7%, MSFT -6% | -$71,500 (-7.15%) |
+| Tech drawdown | All three -10% | -$100,000 (-10.00%) |
+
+The tech-drawdown number is a useful gut-check on its own — a flat 10% drop across
+an entire $1,000,000 book should cost exactly $100,000, and it does, confirming the
+underlying weighted-sum math is correct.
+
+[Insert screenshot: stress scenario bar chart]
+
+### 4. Correlation Spike — Diversification Breaking Down
+
+This scenario keeps each stock's own volatility unchanged but forces the pairwise
+correlation up to 0.85 — simulating a crisis where stocks that normally move somewhat
+independently suddenly start falling together.
+
+| Confidence | Normal VaR | Correlation-Spiked VaR | Increase |
+|---|---|---|---|
+| 95% | $25,897 | $29,161 | +12.6% |
+| 99% | $36,627 | $41,242 | +12.6% |
+
+The takeaway: roughly 12.6% of this portfolio's risk protection comes from the fact
+that AAPL, GOOGL, and MSFT don't crash in perfect sync. In a real crisis, that
+protection tends to shrink or disappear — which is exactly the point of running
+this scenario rather than just trusting the "normal" correlation numbers.
+
+### 5. Rolling VaR Backtest — Does the Model Actually Hold Up?
+
+Instead of just trusting the VaR formula, I tested it: rolled a 250-day historical
+VaR window forward through the data day by day, and checked how often the *next*
+day's actual loss broke through the threshold predicted from *prior* days only
+(no lookahead).
+
+**Result: 43 breaches out of 877 testable days — a 4.90% breach rate.** A well-calibrated
+95% VaR model should breach about 5% of the time, so this is close to ideal. It's the
+strongest piece of evidence in the whole project that the model isn't just
+mathematically correct on paper — it's actually reliable against nearly 3.5 years
+of real market behavior.
+
+[Insert screenshot: rolling backtest chart with breach markers]
+
+### Automated Tests
+
+To make sure the logic itself is correct (not just "looks right" on real data), I
+wrote 6 unit tests using synthetic data, so they run instantly with no internet
+dependency:
+
+- 99% VaR is always greater than or equal to 95% VaR
+- CVaR always exceeds VaR at the same confidence level
+- Parametric and Monte Carlo VaR agree within 5% of each other
+- A hand-calculable stress shock matches manual arithmetic exactly
+- Forcing correlation upward never decreases VaR
+- Weights that don't sum to 1 raise an error instead of silently producing wrong numbers
+
+All 6 pass.
