@@ -175,7 +175,7 @@ strongest piece of evidence in the whole project that the model isn't just
 mathematically correct on paper — it's actually reliable against nearly 3.5 years
 of real market behavior.
 
-![Rolling Backtest](Images/IMG_20260705_160518.jpg)
+![Rolling Backtest](Images/IMG_20260705_160406.jpg)
 
 ### Automated Tests
 
