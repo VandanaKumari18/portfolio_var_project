@@ -13,6 +13,22 @@ There are two parts to the answer:
 2. **Stress Testing** — instead of statistics, I asked "what if a specific crisis hit today?"
    and calculated the exact dollar damage.
 
+ # ⚠️ Quick Run Option: `all_in_one.py`
+
+**If you just want to run this project in one shot with no setup, use `all_in_one.py`.
+It contains the entire pipeline — dependency install, data fetching, all VaR methods,
+stress testing, and the rolling backtest — in a single self-contained script. No other
+file needs to be created or run before or after it.**
+
+**In Google Colab: paste the full contents of `all_in_one.py` into one blank code cell
+and run that cell. Output (tests, tables, and all charts) appears directly below it.**
+
+**From a terminal:**
+**The rest of this README documents the full modular version (`data.py`, `risk.py`,
+`scenarios.py`, `main.py`), which follows the project's requested file separation and
+is the version to reference for code structure and design decisions.**
+
+---
 ## How to run it
 pip install -r requirements.txt
 python main.py
